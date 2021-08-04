@@ -1,0 +1,216 @@
+<div class="h-100 w-100 d-flex flex-column ">
+  <app-header class="mb-auto"></app-header>
+  <div class="container-fluid">
+    <div class="row d-flex justify-content-center align-items-center register-outer-wrapper">
+
+
+      <!-- Username Card -->
+      <mat-card class="col-sm-8 col-md-6 col-lg-4 row justify-content-center align-items-center" *ngIf="usernamePage">
+        <mat-card-title class="text-center">
+          Register
+        </mat-card-title>
+        <mat-card-subtitle class="text-center">
+          Pick a username to continue
+        </mat-card-subtitle>
+        <form (ngSubmit)="openNamePage()">
+          <mat-form-field class="col-12" appearance="outline">
+            <mat-icon matPrefix color="basic">alternate_email</mat-icon>
+            <mat-label>Create a username</mat-label>
+            <input matInput  autocomplete="off" [formControl]="username" placeholder="johndoe12" (input)="userNameFixer()" minlength="5"
+              maxlength="16" autofocus required>
+            <mat-error *ngIf="usernameTaken">This username is already taken, please choose another.</mat-error>
+          </mat-form-field>
+          <div class="col-12 d-flex justify-content-between">
+            <button mat-button color="basic" type="button" routerLink="/login">Sign in instead?</button>
+            <button mat-raised-button
+              [disabled]="(this.username.invalid || usernameLoginButtonDisabled) || usernameTaken" type="submit"
+              color="basic">Next</button>
+          </div>
+        </form>
+      </mat-card>
+
+      <!-- Details Card -->
+      <mat-card class="col-sm-8 col-md-6 col-lg-4 row justify-content-center align-items-center" *ngIf="detailsPage">
+        <mat-card-title class="text-center">
+          Personal Details
+        </mat-card-title>
+        <mat-card-subtitle class="text-center">
+          Please fill in the form below
+        </mat-card-subtitle>
+        <form (ngSubmit)="detailsPage=false; passwordPage=true">
+          <mat-form-field class="col-12" appearance="outline">
+            <mat-label>First Name</mat-label>
+            <input matInput  autocomplete="off" [formControl]="firstName" placeholder="John" minlength="1" maxlength="35" autofocus
+              required>
+            <mat-error *ngIf="this.firstName.invalid">Please enter your first name</mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="col-12" appearance="outline">
+            <mat-label>Last Name</mat-label>
+            <input matInput  autocomplete="off" [formControl]="lastName" placeholder="Doe" minlength="1" maxlength="35" required>
+            <mat-error *ngIf="this.lastName.invalid">Please enter your last name</mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="col-12" appearance="outline">
+            <mat-label>Phone</mat-label>
+            <input type="phone" matInput  autocomplete="off" [formControl]="phone" placeholder="1234567890" maxlength="12" autofocus
+              required>
+            <mat-error *ngIf="this.phone.invalid">Please enter your phone number</mat-error>
+          </mat-form-field>
+
+          <!-- <mat-form-field class="col-12" appearance="outline">
+            <mat-label>Bio</mat-label>
+            <textarea matInput  autocomplete="off" [formControl]="bio" maxlength="120" placeholder="I'm available to chat"
+              required></textarea>
+            <mat-error *ngIf="this.bio.invalid">Please enter a bio</mat-error>
+          </mat-form-field> -->
+
+          <mat-hint>Profile Picture:</mat-hint>
+          <input type="file" class="form-control col-12" [formControl]="profilePicture" id="profilepic" single
+            placeholder="Select a profile picture" accept="image/*" (change)="imageSelected($event)" required>
+
+          <img class="col-5 w-100 form-control" *ngIf="finalPictureString" [src]="finalPictureString" alt="">
+
+          <div class=" col-12 d-flex justify-content-between">
+          <button mat-button color="basic" type="button"
+            (click)="detailsPage=!detailsPage;usernamePage=!usernamePage">Back</button>
+          <button mat-raised-button
+            [disabled]="this.firstName.invalid || this.lastName.invalid || this.phone.invalid || this.bio.invalid || this.profilePicture.invalid"
+            type="submit" color="basic">Next</button>
+    </div>
+    </form>
+    </mat-card>
+
+    <!-- Password Card -->
+    <mat-card class="col-sm-8 col-md-6 col-lg-4 row justify-content-center align-items-center" *ngIf="passwordPage">
+      <mat-card-title class="text-center">
+        Create a password
+      </mat-card-title>
+      <mat-card-subtitle class="text-center">
+        Choose a strong password of your choice
+      </mat-card-subtitle>
+      <form (ngSubmit)="passwordPage=false; emailPage=true;">
+        <mat-form-field class="col-12" appearance="outline">
+          <mat-icon matPrefix color="basic">lock</mat-icon>
+          <mat-label>Create a password</mat-label>
+          <input matInput  autocomplete="off" [type]="hidePassword ? 'password' : 'text'" placeholder="johndoe12" [formControl]="password"
+            placeholder="Enter your password" minlength="6" maxlength="20" required>
+          <button mat-icon-button matSuffix *ngIf="this.password.value!=''" type="button"
+            (click)="this.password.setValue('')">
+            <mat-icon>close</mat-icon>
+          </button>
+          <mat-error *ngIf="this.password.invalid">Choose a strong password</mat-error>
+          <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword">
+            <mat-icon *ngIf="hidePassword">visibility_off</mat-icon>
+            <mat-icon *ngIf="!hidePassword">visibility</mat-icon>
+          </button>
+        </mat-form-field>
+
+        <div class="col-12 d-flex justify-content-between">
+          <button mat-button color="basic" type="button"
+            (click)="passwordPage=!passwordPage; detailsPage=!detailsPage">Back</button>
+          <button mat-raised-button [disabled]="this.password.invalid" type="submit"
+            color="basic">Next</button>
+        </div>
+      </form>
+    </mat-card>
+
+    <!-- Email Card -->
+    <mat-card class="col-sm-8 col-md-6 col-lg-4 row justify-content-center align-items-center" *ngIf="emailPage">
+      <mat-card-title class="text-center"> Enter your email </mat-card-title>
+      <mat-card-subtitle class="text-center">
+        Verify your email to complete registration
+      </mat-card-subtitle>
+      <mat-form-field class="col-12" appearance="outline">
+        <mat-icon matPrefix color="basic">mail_outline</mat-icon>
+        <mat-label>Enter your email address</mat-label>
+        <input matInput  autocomplete="off" type="email" [formControl]="email" placeholder="johndoe@example.com" (input)="emailTaken=false"
+          autofocus required>
+        <mat-error *ngIf="emailTaken">This email is already registered, use another or sign in.</mat-error>
+        <mat-error *ngIf="this.email.invalid">Please enter a valid email</mat-error>
+      </mat-form-field>
+
+
+      <div class="col-12 d-flex justify-content-between">
+        <button mat-button color="basic" type="button"
+          (click)="emailPage=!emailPage; passwordPage=!passwordPage">Back</button>
+
+        <button mat-raised-button type="button" [disabled]="this.email.invalid || emailTaken || verifyButtonDisable"
+          color="basic" data-bs-toggle="modal" data-bs-target="#exampleModal">Verify Email</button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h3 class="modal-title" id="exampleModalLabel">Submit my account information</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                You won't be able to change your details after this.
+                <mat-checkbox class="example-margin" [(ngModel)]="termsBox">I accept the <a class="terms-conditions"
+                    href="#">terms and conditions.</a></mat-checkbox>
+              </div>
+              <div class="modal-footer">
+                <button type="button" mat-button color="basic" data-bs-dismiss="modal">No, go back</button>&nbsp;
+                <button mat-raised-button type="submit" data-bs-dismiss="modal" [disabled]="!termsBox"
+                  (click)="checkEmail()" color="basic">{{verifyButtonDisable ? 'Loading' :'Continue'}}</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </mat-card>
+
+    <!-- OTP Card -->
+    <mat-card class="col-sm-8 col-md-6 col-lg-4 row justify-content-center align-items-center" *ngIf="otpPage">
+      <mat-card-title class="text-center">
+        OTP
+      </mat-card-title>
+      <mat-card-subtitle class="text-center">
+        Enter the OTP you recieved in your email
+      </mat-card-subtitle>
+      <form (ngSubmit)="verifyOTP()">
+        <mat-form-field class="col-12" appearance="fill">
+          <mat-icon matPrefix color="basic">vpn_key</mat-icon>
+          <mat-label>Enter OTP</mat-label>
+          <input matInput  autocomplete="off" [formControl]="otp" placeholder="123456" minlength="6" maxlength="6" autofocus required>
+          <mat-hint>It may take a few minutes to receive the OTP</mat-hint>
+          <mat-error *ngIf="this.otp.invalid">Incorrect OTP, please try again.</mat-error>
+        </mat-form-field>
+        <div class="col-12 d-flex justify-content-between">
+          <button mat-button color="basic" type="button" [disabled]="timerOn"
+            (click)="timerOn=true;timer(60);otphint=true;sendOTP()">Resend
+            OTP {{timerOn ? remainingTime:""}}</button>
+          <button mat-raised-button [disabled]="this.otp.invalid" type="submit" color="basic">Next</button>
+        </div>
+        <mat-hint class="col-12" *ngIf="otphint">Make sure to check your spam folder.</mat-hint>
+      </form>
+    </mat-card>
+
+    <!-- Success Card -->
+    <mat-card class="col-sm-8 col-md-6 col-lg-4 d-flex row justify-content-center align-items-center"
+      *ngIf="regSuccess">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="#4BB543"
+        class="bi bi-check2-circle col-4 col-sm-4 col-md-4 col-lg-4" viewBox="0 0 16 16">
+        <path
+          d="M2.5 8a5.5 5.5 0 0 1 8.25-4.764.5.5 0 0 0 .5-.866A6.5 6.5 0 1 0 14.5 8a.5.5 0 0 0-1 0 5.5 5.5 0 1 1-11 0z" />
+        <path
+          d="M15.354 3.354a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l7-7z" />
+      </svg>
+      <mat-card-title class="text-center">Verification Successful</mat-card-title>
+      <mat-card-subtitle class="text-center">
+        Your account has been created!
+      </mat-card-subtitle>
+      <div class="col-12 d-flex justify-content-center">
+        <button mat-raised-button color="basic" routerLink="/login">Click here to Login</button>
+      </div>
+
+
+    </mat-card>
+
+  </div>
+</div>
+<app-footer class="mt-auto"></app-footer>
+</div>

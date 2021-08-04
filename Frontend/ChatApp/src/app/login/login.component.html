@@ -1,0 +1,73 @@
+<div class="h-100 w-100 d-flex flex-column">
+    <app-header class="mb-auto"></app-header>
+    <div class="container-fluid">
+        <div class="row justify-content-center align-items-center login-outer-wrapper">
+            <mat-card class="col-sm-8 col-md-6 col-lg-4 row justify-content-center align-items-center"
+                *ngIf="usernamePage">
+                <mat-card-title class="text-center">
+                    Login
+                </mat-card-title>
+                <mat-card-subtitle class="text-center">
+                    to continue
+                </mat-card-subtitle>
+                <form (ngSubmit)="this.usernamePage = !this.usernamePage; setPasswordFocus()">
+                    <mat-form-field class="col-12" appearance="outline">
+                        <mat-icon matPrefix color="basic">alternate_email</mat-icon>
+                        <mat-label>Enter your username</mat-label>
+                        <input matInput [formControl]="username" placeholder="johndoe12" maxlength="16" autocomplete="off" autofocus #usernameInput="matInput"
+                            required>
+                        <mat-error *ngIf="this.username.invalid">Please enter a username</mat-error>
+                    </mat-form-field>
+                    <div class="col-12 d-flex justify-content-between">
+                        <button mat-button color="basic" type="button" routerLink="/signup">Create an account</button>
+                        <button mat-raised-button [disabled]="this.username.invalid" type="submit"
+                            color="basic">Next</button>
+                    </div>
+                </form>
+            </mat-card>
+
+            <mat-card class="col-sm-8 col-md-6 col-lg-4 row justify-content-center align-items-center"
+                *ngIf="!usernamePage">
+                <mat-card-title class="text-center">
+                    Welcome
+                </mat-card-title>
+                <mat-card-subtitle class="d-flex justify-content-center">
+                    <mat-chip-list>
+                        <mat-chip color="basic" selected>
+                            <mat-icon>person_outline</mat-icon> {{this.username.value}}
+                        </mat-chip>
+                    </mat-chip-list>
+                </mat-card-subtitle>
+                <form (ngSubmit)="passwordSubmit()">
+                    <mat-error class="col-12" *ngIf="loginError">Invalid login credentials, please try again.
+                    </mat-error>
+                    <div class="col-12"></div>
+                    <mat-form-field class="col-12" appearance="outline">
+                        <mat-icon matPrefix color="basic">lock</mat-icon>
+                        <mat-label>Enter your password</mat-label>
+                        <input matInput (input)="loginError=false" [type]="hidePassword ? 'password' : 'text'"
+                            [formControl]="password" placeholder="Enter your password" maxlength="20" autocomplete="off" #passwordInput="matInput" required>
+                        <button mat-icon-button matSuffix *ngIf="this.password.value!=''"
+                            (click)="this.password.setValue('')" type="button">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                        <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword">
+                            <mat-icon *ngIf="hidePassword">visibility_off</mat-icon>
+                            <mat-icon *ngIf="!hidePassword">visibility</mat-icon>
+                        </button>
+                        <mat-error *ngIf="this.password.invalid">Please enter a password</mat-error>
+                    </mat-form-field>
+
+                    <div class=" col-12 d-flex justify-content-between">
+                        <button mat-button color="basic" type="button"
+                            (click)="usernamePage=!usernamePage; loginError=false;setUsernameFocus();">Back</button>
+                        <button mat-raised-button color="basic" type="submit"
+                            [disabled]="this.password.invalid">Login</button>
+                    </div>
+                </form>
+            </mat-card>
+
+        </div>
+    </div>
+    <app-footer class="mt-auto"></app-footer>
+</div>

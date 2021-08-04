@@ -1,0 +1,13 @@
+.container-fluid {
+    height: calc(100vh - 60px) !important;
+}
+
+.getting-started-image {
+    margin-bottom: 2rem;
+}
+
+mat-card-title{
+    font-size: 2.5rem;
+    margin: 1rem 1rem 0.5rem 1rem;
+    line-height: 3.25rem;
+}

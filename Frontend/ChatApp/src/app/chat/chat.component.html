@@ -1,0 +1,258 @@
+<div class="container-fluid outside-container">
+    <nav class="navbar navbar-expand-md navbar-dark bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">ChatApp</a>
+
+            <div class="justify-content-end" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <img mat-icon-button mat-card-avatar [matMenuTriggerFor]="menu"
+                        class=" nav-linkcard-avatar w-100 profile-icon"
+                        [src]="profilePicture">
+                    <mat-menu #menu="matMenu">
+                        <button mat-menu-item (click)="logout()">
+                            <mat-icon>logout</mat-icon>
+                            <span>Logout</span>
+                        </button>
+                    </mat-menu>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid chat-container align-items-center">
+        <mat-drawer-container>
+            <mat-drawer class="my-auto col-12 col-sm-12 col-md-4 col-lg-4" #drawer mode="side" opened>
+                <mat-tab-group mat-stretch-tabs class="mat-elevation-z4">
+                    <mat-tab label="Chats">
+                        <ng-template matTabContent>
+
+
+                            <form (ngSubmit)="searchUser()">
+                                <mat-form-field class="col-12 user-search-input" appearance="fill">
+                                    <mat-label>Search users</mat-label>
+                                    <button mat-icon-button matPrefix *ngIf="this.searchItem.value"
+                                        (click)="this.searchItem.setValue('');viewSearchResults=false;" type="button">
+                                        <mat-icon>arrow_back</mat-icon>
+                                    </button>
+                                    <input matInput [formControl]="searchItem" placeholder="johndoe12"
+                                        (input)="searchUser()" autocomplete="off" maxlength="20"
+                                        (focus)="viewSearchResults=true" (focusout)="hideSearchResults()">
+                                    <button mat-icon-button matSuffix *ngIf="this.searchItem.value"
+                                        (click)="this.searchItem.setValue('');viewSearchResults=false;" type="button">
+                                        <mat-icon>close</mat-icon>
+                                    </button>
+                                    <button mat-icon-button matSuffix
+                                        [type]="this.searchItem.value ? 'submit': 'button'">
+                                        <mat-icon>search</mat-icon>
+                                    </button>
+                                </mat-form-field>
+                            </form>
+                            <div class="search-results-wrapper shadow-lg"
+                                *ngIf="this.searchItem.value && viewSearchResults">
+                                <div *ngFor="let searchResult of searchResults">
+                                    <div class="hover-background-change"
+                                        *ngIf="searchResult.username && checkSearchResInContacts(searchResult.username) && this.searchItem.value"
+                                        (click)="selectContactFromSearch(searchResult);this.searchItem.setValue('');searchResult.username='';">
+                                        <mat-card class="col-12 d-flex align-items-center user-card">
+                                            <div class="flex-grow-1 row align-items-center">
+                                                <div mat-card-avatar class="col-2 card-avatar"
+                                                    style="background-image: url('{{searchResult.picture}}')">
+                                                </div>
+                                                <div class="col-8">
+                                                    <mat-card-title class="text-truncate">
+                                                        {{searchResult.firstName}}
+                                                        {{searchResult.lastName}}</mat-card-title>
+                                                    <mat-card-subtitle class="text-truncate">
+                                                        {{searchResult.username}}
+                                                    </mat-card-subtitle>
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="col-1 mute-block d-flex justify-content-center align-items-center">
+                                                <mat-icon *ngIf="mutedContacts.includes(searchResult.username)">
+                                                    volume_off
+                                                </mat-icon>
+                                                <mat-icon *ngIf="blockedContacts.includes(searchResult.username)">
+                                                    block
+                                                </mat-icon>
+                                            </div>
+                                        </mat-card>
+                                    </div>
+
+                                    <div class="hover-background-change"
+                                        *ngIf="searchResult.username && !checkSearchResInContacts(searchResult.username) && this.searchItem.value"
+                                        (click)="addNewContact(searchResult);searchItem.setValue('');searchResult.username='';">
+                                        <mat-card class="col-12 d-flex align-items-center user-card">
+                                            <div class="flex-grow-1 row align-items-center">
+                                                <div mat-card-avatar class="col-2 card-avatar"
+                                                    style="background-image: url('{{searchResult.picture}}')">
+                                                </div>
+                                                <div class="col-8">
+                                                    <mat-card-title class="text-truncate">
+                                                        {{searchResult.firstName}}
+                                                        {{searchResult.lastName}}</mat-card-title>
+                                                    <mat-card-subtitle class="text-truncate">
+                                                        {{searchResult.username}}
+                                                    </mat-card-subtitle>
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="col-1 mute-block d-flex justify-content-center align-items-center">
+                                                <button mat-icon-button color="basic">
+                                                    <mat-icon>person_add</mat-icon>
+                                                </button>
+                                            </div>
+                                        </mat-card>
+                                    </div>
+                                </div>
+
+
+                                <mat-card class="col-12 user-card"
+                                    *ngIf="searchLoadingEnable && !searchResults[0] && searchItem.value">
+                                    <mat-card-header>
+                                        <mat-card-title>Loading...</mat-card-title>
+                                    </mat-card-header>
+                                </mat-card>
+
+                                <mat-card class="col-12 user-card"
+                                    *ngIf="!searchResults[0] && searchItem.value && searchLoadingEnable==false">
+                                    <mat-card-header>
+                                        <mat-card-title>No users found</mat-card-title>
+                                    </mat-card-header>
+                                </mat-card>
+                            </div>
+
+
+
+                            <mat-divider class="divider-margin"></mat-divider>
+
+                            <div class="d-flex justify-content-center align-items-center"
+                                *ngIf="spinnerEnabled ">
+                                <mat-spinner></mat-spinner>
+                            </div>
+
+                            <mat-card-title *ngIf="noContacts">Add users to get started.</mat-card-title>
+
+                            <div matRipple class="hover-background-change d-none d-sm-block d-md-block"
+                                *ngFor="let contact of contacts" (click)="selectContact(contact)">
+                                <mat-card
+                                    class="col-12 d-flex align-items-center user-card {{selectedContact.username==contact.username? 'selected-contact':''}}">
+                                    <div class="flex-grow-1 row align-items-center">
+                                        <div mat-card-avatar class="col-2 card-avatar"
+                                            style="background-image: url('{{contact.picture}}')">
+                                        </div>
+                                        <div class="col-8">
+                                            <mat-card-title class="text-truncate">
+                                                {{contact.firstName}}
+                                                {{contact.lastName}}</mat-card-title>
+                                            <mat-card-subtitle class="text-truncate">
+                                                {{contact.username}}
+                                            </mat-card-subtitle>
+                                        </div>
+                                    </div>
+                                    <div class="col-1 mute-block d-flex justify-content-center align-items-center">
+                                        <mat-icon *ngIf="mutedContacts.includes(contact.username)">
+                                            volume_off</mat-icon>
+                                        <mat-icon *ngIf="blockedContacts.includes(contact.username)">block
+                                        </mat-icon>
+                                    </div>
+                                </mat-card>
+                            </div>
+
+                            <div matRipple class="hover-background-change d-block d-sm-none d-md-none"
+                                *ngFor="let contact of contacts" (click)="selectContact(contact);drawer.close();">
+                                <mat-card class="col-12 d-flex align-items-center user-card">
+                                    <div class="flex-grow-1 row align-items-center">
+                                        <div mat-card-avatar class="col-2 card-avatar"
+                                            style="background-image: url('{{contact.picture}}')">
+                                        </div>
+                                        <div class="col-8">
+                                            <mat-card-title class="text-truncate">
+                                                {{contact.firstName}}
+                                                {{contact.lastName}}</mat-card-title>
+                                            <mat-card-subtitle class="text-truncate">
+                                                {{contact.username}}
+                                            </mat-card-subtitle>
+                                        </div>
+                                    </div>
+                                    <div class="col-1 mute-block d-flex justify-content-center align-items-center">
+                                        <mat-icon *ngIf="mutedContacts.includes(contact.username)">
+                                            volume_off</mat-icon>
+                                        <mat-icon *ngIf="blockedContacts.includes(contact.username)">block
+                                        </mat-icon>
+                                    </div>
+                                </mat-card>
+                            </div>
+                        </ng-template>
+                    </mat-tab>
+                    <mat-tab label="Online">
+                        <ng-template matTabContent>
+
+                            <div matRipple class="hover-background-change d-none d-sm-block d-md-none"
+                                *ngFor="let contact of onlineContacts" (click)="selectContact(contact);drawer.close();">
+                                <mat-card
+                                    class="col-12 d-flex align-items-center user-card {{selectedContact.username==contact.username? 'selected-contact':''}}">
+                                    <div class="flex-grow-1 row align-items-center">
+                                        <div mat-card-avatar class="col-2 card-avatar"
+                                            style="background-image: url('{{selectedContact.picture}}')">
+                                        </div>
+                                        <div class="col-8">
+                                            <mat-card-title class="text-truncate">
+                                                {{contact.firstName}}
+                                                {{contact.lastName}}</mat-card-title>
+                                            <mat-card-subtitle class="text-truncate">
+                                                {{contact.username}}
+                                            </mat-card-subtitle>
+                                        </div>
+                                    </div>
+                                    <div class="col-1 mute-block d-flex justify-content-center align-items-center">
+                                        <mat-icon *ngIf="mutedContacts.includes(contact.username)">
+                                            volume_off</mat-icon>
+                                        <mat-icon *ngIf="blockedContacts.includes(contact.username)">block
+                                        </mat-icon>
+                                    </div>
+                                </mat-card>
+                            </div>
+                            <div matRipple class="hover-background-change d-sm-none d-md-block"
+                                *ngFor="let contact of onlineContacts" (click)="selectContact(contact)">
+                                <mat-card
+                                    class="col-12 d-flex align-items-center user-card {{selectedContact.username==contact.username? 'selected-contact':''}}">
+                                    <div class="flex-grow-1 row align-items-center">
+                                        <div mat-card-avatar class="col-2 card-avatar"
+                                            style="background-image: url('{{selectedContact.picture}}')">
+                                        </div>
+                                        <div class="col-8">
+                                            <mat-card-title class="text-truncate">
+                                                {{contact.firstName}}
+                                                {{contact.lastName}}</mat-card-title>
+                                            <mat-card-subtitle class="text-truncate">
+                                                {{contact.username}}
+                                            </mat-card-subtitle>
+                                        </div>
+                                    </div>
+                                    <div class="col-1 mute-block d-flex justify-content-center align-items-center">
+                                        <mat-icon *ngIf="mutedContacts.includes(contact.username)">
+                                            volume_off</mat-icon>
+                                        <mat-icon *ngIf="blockedContacts.includes(contact.username)">block
+                                        </mat-icon>
+                                    </div>
+                                </mat-card>
+                            </div>
+                        </ng-template>
+                    </mat-tab>
+                </mat-tab-group>
+
+            </mat-drawer>
+            <mat-drawer-content class="col-12 col-sm-12 d-inline-flex justify-content-center align-items-center"
+                [ngClass]="{'col-lg-8' : drawer.opened, 'col-lg-12':!drawer.opened,'col-md-8':drawer.opened,'col-md-12':!drawer.opened}">
+                <button mat-fab class="toggle-negative" color="basic" (click)="drawer.toggle()">
+                    <mat-icon>&nbsp;&nbsp;{{drawer.opened? ' arrow_back_ios' : 'arrow_forward_ios'}}
+                    </mat-icon>
+                </button>
+                <app-select-chat class="flex-grow-1" *ngIf="!selectedContact.username">
+                </app-select-chat>
+                <app-chatbox class="flex-grow-1" *ngIf="selectedContact.username" (contactsrefresh)="loadContacts()"
+                    [contact]="selectedContact" [contacts]="contacts"></app-chatbox>
+            </mat-drawer-content>
+        </mat-drawer-container>
+    </div>
+</div>

@@ -1,0 +1,115 @@
+.navbar {
+    background: rgb(196, 28, 28) !important;
+}
+
+.logoutButton {
+    cursor: pointer;
+}
+
+.outside-container {
+    height: 100vh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex;
+    flex-direction: column;
+    flex-flow: column;
+}
+
+.chat-container {
+    flex: 1 !important;
+    height: auto !important;
+    padding: 0;
+}
+
+mat-drawer-container {
+    height: 100%!important;
+}
+
+mat-drawer {
+    padding: 0.75rem;
+}
+
+.drawer-toggle-icon {
+    color: #fafafa;
+}
+
+.toggle-negative {
+    margin-left: -1.75rem;
+}
+
+.user-search-input {
+    padding-top: 1.34375em;
+}
+
+.profile-icon {
+    height: 2.5rem !important;
+    width: 2.5rem !important;
+    border-radius: 1.5rem !important;
+    cursor: pointer;
+}
+
+mat-tab {
+    height: calc(100% + 2rem) !important;
+}
+
+.mat-tab-body-content {
+    height: 100% !important;
+    overflow: hidden !important;
+}
+
+.card-avatar {
+    background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
+    background-size: cover;
+    margin-left: 0.75rem;
+}
+
+mat-card-subtitle {
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+.search-results-wrapper {
+    background: rgb(196, 28, 28);
+    margin-top: -1.34375em;
+    padding-top: 0.5px;
+    padding-bottom: 0.5px;
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+    position: absolute;
+    width: 100%;
+    /* position: fixed; */
+    /* width: 544px; */
+    z-index: 1000;
+}
+
+.divider-margin {
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.user-card {
+    cursor: pointer;
+    margin: 0.5em;
+    width: calc(100% - 1em);
+}
+
+.hover-background-change :hover {
+    background: #dadce0 !important;
+}
+
+.selected-contact {
+    background: #dadce0;
+    border-left: 5px solid rgb(196, 28, 28);
+}
+
+.selected-contact .card-avatar {
+    margin-left: calc(0.75rem - 5px) !important;
+}
+
+mat-tab-group {
+    height: 100%;
+}
+
+.mute-block mat-icon {
+    color: rgb(196, 28, 28);
+}
