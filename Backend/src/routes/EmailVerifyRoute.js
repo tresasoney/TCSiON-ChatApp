@@ -19,7 +19,7 @@ var transporter = nodemailer.createTransport({
 function sendMessage(email, otp) {
 
     var message = {
-        from: "sanjays.donotreply@gmail.com",
+        from: "dont.donotreply@gmail.com",
         to: email,
         subject: "ChatApp - Verify your email to continue your account registration",
         text: "",
